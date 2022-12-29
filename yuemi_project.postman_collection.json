@@ -1,0 +1,2820 @@
+{
+	"info": {
+		"_postman_id": "09501b82-0082-4d27-9ffe-c44a72c68568",
+		"name": "yuemi_project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23761684"
+	},
+	"item": [
+		{
+			"name": "Drinks",
+			"item": [
+				{
+					"name": "201 - POST Drink",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"drink_id_1\", pm.response.json()[\"id\"]);\r",
+									"\r",
+									"pm.test(\"201 status code\", function () {\r",
+									"    //Check for 201 status code\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is valid\", function () {\r",
+									"   //Check if the response content is valid and matches the expected values\r",
+									"   pm.expect(pm.response.json()[\"name\"]).to.eq(\"BMT\");\r",
+									"   pm.expect(pm.response.json()[\"tea\"]).to.eq(\"Black Tea\");\r",
+									"   pm.expect(pm.response.json()[\"topping\"]).to.eq(\"Boba\");\r",
+									"   pm.expect(pm.response.json()[\"order\"]).to.deep.equal(undefined);\r",
+									"   //Check if the self url is correct\r",
+									"   const self_url = pm.environment.get(\"app_url\") + \"/drinks/\" + pm.response.json()[\"id\"];\r",
+									"   pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"BMT\",\r\n    \"tea\": \"Black Tea\",\r\n    \"topping\": \"Boba\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/drinks",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "403 - POST Drink Name Not Unique",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"403 status code\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is not valid\", function () {\r",
+									"    //Check if content is valid\r",
+									"   pm.expect(pm.response.json()[\"Error\"]).to.eq(\"Forbidden. The request object ['name'] is not unique.\");\r",
+									"  });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"BMT\",\r\n    \"tea\": \"Black Tea\",\r\n    \"topping\": \"Boba\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/drinks",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "403 - POST Drink - Bad Data Type",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"403 status code\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is not valid\", function () {\r",
+									"    //Check if content is valid\r",
+									"   pm.expect(pm.response.json()[\"Error\"]).to.eq(\"Forbidden. The request object has invalid data type.\");\r",
+									"  });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"BMT\",\r\n    \"tea\": 5,\r\n    \"topping\": \"Boba\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/drinks",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "406- POST Invalid Mime Type",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"403 status code\", function () {\r",
+									"    pm.response.to.have.status(406);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is not valid\", function () {\r",
+									"    //Check if content is valid\r",
+									"   pm.expect(pm.response.json()[\"Error\"]).to.eq(\"Not Acceptable. MIME type is not supported.\");\r",
+									"  });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/pdf",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"BMT\",\r\n    \"tea\": \"Black Tea\",\r\n    \"topping\": \"Boba\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/drinks",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "201 - POST Drink 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"drink_id_2\", pm.response.json()[\"id\"]);\r",
+									"\r",
+									"pm.test(\"201 status code\", function () {\r",
+									"    //Check for 201 status code\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is valid\", function () {\r",
+									"   //Check if the response content is valid and matches the expected values\r",
+									"   pm.expect(pm.response.json()[\"name\"]).to.eq(\"JMT w/ Boba\");\r",
+									"   pm.expect(pm.response.json()[\"tea\"]).to.eq(\"Jasmine Milk Tea\");\r",
+									"   pm.expect(pm.response.json()[\"topping\"]).to.eq(\"Boba\");\r",
+									"   pm.expect(pm.response.json()[\"order\"]).to.deep.equal(undefined);\r",
+									"   //Check if the self url is correct\r",
+									"   const self_url = pm.environment.get(\"app_url\") + \"/drinks/\" + pm.response.json()[\"id\"];\r",
+									"   pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"JMT w/ Boba\",\r\n    \"tea\": \"Jasmine Milk Tea\",\r\n    \"topping\": \"Boba\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/drinks",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "201 - POST Drink 3",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"drink_id_3\", pm.response.json()[\"id\"]);\r",
+									"\r",
+									"pm.test(\"201 status code\", function () {\r",
+									"    //Check for 201 status code\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"JMT\",\r\n    \"tea\": \"Jasmine Milk Tea\",\r\n    \"topping\": \"Boba\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/drinks",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 - GET all drinks JSON",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"201 status code\", function () {\r",
+									"    //Check for 201 status code\r",
+									"    pm.response.to.have.status(201);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{app_url}}/drinks",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 - GET all drinks HTML",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"201 status code\", function () {\r",
+									"    //Check for 201 status code\r",
+									"    pm.response.to.have.status(201);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{app_url}}/drinks",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "415 - GET all drinks Invalid Mime",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"415 status code\", function () {\r",
+									"    //Check for 201 status code\r",
+									"    pm.response.to.have.status(415);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{app_url}}/drinks",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 - GET drink_id_1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"200 status code\", function () {\r",
+									"    //Check for 201 status code\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{app_url}}/drinks/{{drink_id_1}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks",
+								"{{drink_id_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 - GET drink_id_1 Copy",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{app_url}}/drinks/{{drink_id_1}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks",
+								"{{drink_id_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "404 - GET drink_id_1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"404 status code\", function () {\r",
+									"    //Check for 201 status code\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is not valid\", function () {\r",
+									"    //Check if content is valid\r",
+									"   pm.expect(pm.response.json()[\"Error\"]).to.eq(\"Not Found. No drink with this drink_id exists.\");\r",
+									"  });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{app_url}}/drinks/{{drink_invalid}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks",
+								"{{drink_invalid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 - PUT drink_id_1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"200 status code\", function () {\r",
+									"    //Check for 201 status code\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is valid\", function () {\r",
+									"   //Check if the response content is valid and matches the expected values\r",
+									"   pm.expect(pm.response.json()[\"name\"]).to.eq(\"BMT\");\r",
+									"   pm.expect(pm.response.json()[\"tea\"]).to.eq(\"Black Milk Tea\");\r",
+									"   pm.expect(pm.response.json()[\"topping\"]).to.eq(\"Boba with Pudding\");\r",
+									"   pm.expect(pm.response.json()[\"order\"]).to.deep.equal(undefined);\r",
+									"   //Check if the self url is correct\r",
+									"   const self_url = pm.environment.get(\"app_url\") + \"/drinks/\" + pm.response.json()[\"id\"];\r",
+									"   pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"BMT\",\r\n    \"tea\": \"Black Milk Tea\",\r\n    \"topping\": \"Boba with Pudding\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/drinks/{{drink_id_1}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks",
+								"{{drink_id_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400 - PUT drink_id_1 Invalid Data Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"400 status code\", function () {\r",
+									"    //Check for 201 status code\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is not valid\", function () {\r",
+									"    //Check if content is valid\r",
+									"   pm.expect(pm.response.json()[\"Error\"]).to.eq(\"Bad Request. The request object is missing at least one of the required attributes.\");\r",
+									"  });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"tea\": \"Black Milk Tea\",\r\n    \"topping\": \"Boba with Pudding\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/drinks/{{drink_id_1}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks",
+								"{{drink_id_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400 - PUT drink_id_1 No Body",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"400 status code\", function () {\r",
+									"    //Check for 201 status code\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is not valid\", function () {\r",
+									"    //Check if content is valid\r",
+									"   pm.expect(pm.response.json()[\"Error\"]).to.eq(\"The request object is missing at least one of the required attributes\");\r",
+									"  });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/drinks/{{drink_id_1}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks",
+								"{{drink_id_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 - PUT drink_id_1 Copy 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"200 status code\", function () {\r",
+									"    //Check for 201 status code\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is valid\", function () {\r",
+									"   //Check if the response content is valid and matches the expected values\r",
+									"   pm.expect(pm.response.json()[\"name\"]).to.eq(\"BMT\");\r",
+									"   pm.expect(pm.response.json()[\"tea\"]).to.eq(\"Black Milk Tea\");\r",
+									"   pm.expect(pm.response.json()[\"topping\"]).to.eq(\"Boba with Pudding\");\r",
+									"   pm.expect(pm.response.json()[\"order\"]).to.deep.equal(undefined);\r",
+									"   //Check if the self url is correct\r",
+									"   const self_url = pm.environment.get(\"app_url\") + \"/drinks/\" + pm.response.json()[\"id\"];\r",
+									"   pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"BMT\",\r\n    \"tea\": \"Black Milk Tea\",\r\n    \"topping\": \"Boba with Pudding\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/drinks/{{drink_id_1}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks",
+								"{{drink_id_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "403 - PUT drink_id_1 Invalid Data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"201 status code\", function () {\r",
+									"    //Check for 201 status code\r",
+									"    pm.response.to.have.status(403);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is not valid\", function () {\r",
+									"    //Check if content is valid\r",
+									"   pm.expect(pm.response.json()[\"Error\"]).to.eq(\"Forbidden. The request object has invalid data type.\");\r",
+									"  });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": 7,\r\n    \"tea\": \"Black Milk Tea\",\r\n    \"topping\": \"Boba with Pudding\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/drinks/{{drink_id_1}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks",
+								"{{drink_id_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "404 - PUT drink_id_1 Invalid ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"404 status code\", function () {\r",
+									"    //Check for 201 status code\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is not valid\", function () {\r",
+									"    //Check if content is valid\r",
+									"   pm.expect(pm.response.json()[\"Error\"]).to.eq(\"Not Found. No drink with this drink_id exists.\");\r",
+									"  });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": 7,\r\n    \"tea\": \"Black Milk Tea\",\r\n    \"topping\": \"Boba with Pudding\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/drinks/{{drink_invalid}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks",
+								"{{drink_invalid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 - PATCH drink_id_1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"200 status code\", function () {\r",
+									"    //Check for 201 status code\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is valid\", function () {\r",
+									"   //Check if the response content is valid and matches the expected values\r",
+									"   pm.expect(pm.response.json()[\"name\"]).to.eq(\"BOBA\");\r",
+									"   pm.expect(pm.response.json()[\"tea\"]).to.eq(\"Black Milk Tea\");\r",
+									"   pm.expect(pm.response.json()[\"topping\"]).to.eq(\"BOBA\");\r",
+									"   pm.expect(pm.response.json()[\"order\"]).to.deep.equal(undefined);\r",
+									"   //Check if the self url is correct\r",
+									"   const self_url = pm.environment.get(\"app_url\") + \"/drinks/\" + pm.response.json()[\"id\"];\r",
+									"   pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"BOBA\",\r\n    \"topping\": \"BOBA\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/drinks/{{drink_id_1}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks",
+								"{{drink_id_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 - PATCH drink_id_1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"200 status code\", function () {\r",
+									"    //Check for 201 status code\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is valid\", function () {\r",
+									"   //Check if the response content is valid and matches the expected values\r",
+									"   pm.expect(pm.response.json()[\"name\"]).to.eq(\"BOBA\");\r",
+									"   pm.expect(pm.response.json()[\"tea\"]).to.eq(\"black tea\");\r",
+									"   pm.expect(pm.response.json()[\"topping\"]).to.eq(\"BOBA\");\r",
+									"   pm.expect(pm.response.json()[\"order\"]).to.deep.equal(undefined);\r",
+									"   //Check if the self url is correct\r",
+									"   const self_url = pm.environment.get(\"app_url\") + \"/drinks/\" + pm.response.json()[\"id\"];\r",
+									"   pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"tea\": \"black tea\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/drinks/{{drink_id_1}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks",
+								"{{drink_id_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "403 - PATCH drink_id_1 Wrong Data Type",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"403 status code\", function () {\r",
+									"    //Check for 201 status code\r",
+									"    pm.response.to.have.status(403);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is not valid\", function () {\r",
+									"    //Check if content is valid\r",
+									"   pm.expect(pm.response.json()[\"Error\"]).to.eq(\"Forbidden. The request object has invalid data type.\");\r",
+									" });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"tea\": 12321\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/drinks/{{drink_id_1}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks",
+								"{{drink_id_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "403- PATCH drink_id_2 nonunique name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"403 status code\", function () {\r",
+									"    //Check for 201 status code\r",
+									"    pm.response.to.have.status(403);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is not valid\", function () {\r",
+									"    //Check if content is valid\r",
+									"   pm.expect(pm.response.json()[\"Error\"]).to.eq(\"Forbidden. The request object ['name'] is not unique.\")\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"BOBA\",\r\n    \"topping\": \"BOBA\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/drinks/{{drink_id_2}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks",
+								"{{drink_id_2}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400- PATCH drink_id_2 No Body",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"400 status code\", function () {\r",
+									"    //Check for 201 status code\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is not valid\", function () {\r",
+									"    //Check if content is valid\r",
+									"   pm.expect(pm.response.json()[\"Error\"]).to.eq(\"The request object is missing at least one of the required attributes\")\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/drinks/{{drink_id_2}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks",
+								"{{drink_id_2}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "204 - DELETE drink_id_2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"204 status code\", function () {\r",
+									"    //Check for 201 status code\r",
+									"    pm.response.to.have.status(204);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/drinks/{{drink_id_2}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks",
+								"{{drink_id_2}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "404- DELETE drink_id_2 Not Found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"404 status code\", function () {\r",
+									"    //Check for 201 status code\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"pm.test(\"content is not valid\", function () {\r",
+									"    //Check if content is valid\r",
+									"   pm.expect(pm.response.json()[\"Error\"]).to.eq(\"Not Found. No drink with this drink_id exists.\");\r",
+									"  });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/drinks/{{drink_id_2}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks",
+								"{{drink_id_2}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 - GET drink_id_1 Copy",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{app_url}}/drinks/{{drink_id_1}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks",
+								"{{drink_id_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 - GET drink_id_1 Copy",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{app_url}}/drinks/{{drink_id_1}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks",
+								"{{drink_id_1}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "201 - POST Order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"order_id_1\", pm.response.json()[\"order_id\"]);\r",
+									"\r",
+									"pm.test(\"201 status code\", function () {\r",
+									"    //Check for 201 status code\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is valid\", function () {\r",
+									"   //Check if the response content is valid and matches the expected values\r",
+									"   pm.expect(pm.response.json()[\"date\"]).to.eq(\"05-05-05\");\r",
+									"   pm.expect(pm.response.json()[\"size\"]).to.deep.equal(\"Medium\");\r",
+									"   pm.expect(pm.response.json()[\"customer_information\"]).to.deep.equal(\"Medium\");\r",
+									"   //Check if the self url is correct\r",
+									"   const self_url = pm.environment.get(\"app_url\") + \"/orders/\" + pm.response.json()[\"order_id\"];\r",
+									"   pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt1}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"date\": \"05-05-05\",\r\n    \"size\": \"Medium\",\r\n    \"drink_id\": {{drink_id_1}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/orders",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400- POST Order Already Exists",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"400 status code\", function () {\r",
+									"    //Check for 201 status code\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is not valid\", function () {\r",
+									"    //Check if content is valid\r",
+									"   pm.expect(pm.response.json()[\"Error\"]).to.eq(\"Order already exists.\");\r",
+									"  });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt1}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"date\": \"05-05-05\",\r\n    \"size\": \"Medium\",\r\n    \"drink_id\": {{drink_id_3}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/orders",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400 - POST Order Invalid body",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"400 status code\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is not valid\", function () {\r",
+									"    //Check if content is valid\r",
+									"   pm.expect(pm.response.json()[\"Error\"]).to.eq(\"The request object is missing at least one of the required attributes\");\r",
+									"  });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt1}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"date\": \"05-05-05\",\r\n    \"size\": \"Medium\",\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/orders",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 - POST Order Unauthorized",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"401 status code\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is not valid\", function () {\r",
+									"    //Check if content is valid\r",
+									"   pm.expect(pm.response.json()[\"Error\"]).to.eq(\"Unauthorized. JWT not verified.\");\r",
+									"  });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{invalid_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/ecmascript",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"date\": \"05-05-05\",\r\n    \"size\": \"Medium\",\r\n    \"drink_id\": 1234\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/orders",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "403 - POST Order Invalid Data Type",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"403 status code\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is not valid\", function () {\r",
+									"    //Check if content is valid\r",
+									"   pm.expect(pm.response.json()[\"Error\"]).to.eq(\"Forbidden. The request object has invalid data type.\");\r",
+									"  });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{wallace_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"date\": \"05-05-05\",\r\n    \"size\": 1234,\r\n    \"drink_id\": {{drink_id_1}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/orders",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "404 - POST Order drink_id not found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"404 status code\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is not valid\", function () {\r",
+									"    //Check if content is valid\r",
+									"   pm.expect(pm.response.json()[\"Error\"]).to.eq(\"Not Found. No drink with this drink_id exists.\");\r",
+									"  });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{wallace_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"date\": \"05-05-05\",\r\n    \"size\": \"Medium\",\r\n    \"drink_id\": 1234\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/orders",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "406 - POST Order Mime not Valid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"406 status code\", function () {\r",
+									"    pm.response.to.have.status(406);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is not valid\", function () {\r",
+									"    //Check if content is valid\r",
+									"   pm.expect(pm.response.json()[\"Error\"]).to.eq(\"Not Acceptable. MIME type is not supported.\");\r",
+									"  });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{wallace_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/ecmascript",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"date\": \"05-05-05\",\r\n    \"size\": \"Medium\",\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/orders",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 - GET Orders",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"200 status code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt1}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/ecmascript",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/orders",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 Unauthorized- GET Orders",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"401 status code\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"pm.test(\"content is not valid\", function () {\r",
+									"    //Check if content is valid\r",
+									"   pm.expect(pm.response.json()[\"Error\"]).to.eq(\"Unauthorized. JWT not verified.\")\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{invalid_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/atom+xml",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/orders",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "415 Unsupported media type- GET Orders",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"415 status code\", function () {\r",
+									"    pm.response.to.have.status(415);\r",
+									"});\r",
+									"pm.test(\"content is not valid\", function () {\r",
+									"    //Check if content is valid\r",
+									"   pm.expect(pm.response.json()[\"Error\"]).to.eq(\"Unsupported Media Type. Please submit 'application/json' or 'text/html' MIME type.\")\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{wallace_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/atom+xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/orders",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "405 - Method not allowed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"415 status code\", function () {\r",
+									"    pm.response.to.have.status(415);\r",
+									"});\r",
+									"pm.test(\"content is not valid\", function () {\r",
+									"    //Check if content is valid\r",
+									"   pm.expect(pm.response.json()[\"Error\"]).to.eq(\"Unsupported Media Type. Please submit 'application/json' or 'text/html' MIME type.\")\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{invalid_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/atom+xml",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/orders",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200- GET Order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"200 status code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"content is valid\", function () {\r",
+									"   //Check if the response content is valid and matches the expected values\r",
+									"   pm.expect(pm.response.json()[\"date\"]).to.eq(\"05-05-05\");\r",
+									"   pm.expect(pm.response.json()[\"size\"]).to.deep.equal(\"Medium\");\r",
+									"   //Check if the self url is correct\r",
+									"   const self_url = pm.environment.get(\"app_url\") + \"/orders/\" + pm.response.json()[\"order_id\"];\r",
+									"   pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{wallace_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/atom+xml",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/orders/{{order_id_1}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"orders",
+								"{{order_id_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "404  - GET Order id not found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"404 status code\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"pm.test(\"content is not valid\", function () {\r",
+									"    //Check if content is valid\r",
+									"   pm.expect(pm.response.json()[\"Error\"]).to.eq(\"Not Found. No order with this order_id exists.\")\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{invalid_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/atom+xml",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/orders/{{order_invalid}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"orders",
+								"{{order_invalid}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 - PUT Order -  DRINK-ID = 3",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"200 status code\", function () {\r",
+									"    //Check for 201 status code\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is valid\", function () {\r",
+									"   //Check if the response content is valid and matches the expected values\r",
+									"   pm.expect(pm.response.json()[\"date\"]).to.eq(\"05-05-05\");\r",
+									"   pm.expect(pm.response.json()[\"size\"]).to.deep.equal(\"Small\");\r",
+									"   //Check if the self url is correct\r",
+									"   const self_url = pm.environment.get(\"app_url\") + \"/orders/\" + pm.response.json()[\"order_id\"];\r",
+									"   pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{wallace_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/atom+xml",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"date\": \"05-05-05\",\r\n    \"size\": \"Small\",\r\n    \"drink_id\": {{drink_id_3}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/orders/{{order_id_1}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"orders",
+								"{{order_id_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 - GET drink_id_3 Copy 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"200 status code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"content is valid\", function () {\r",
+									"   //Check if the response content is valid and matches the expected values\r",
+									"   pm.expect(pm.response.json()[\"name\"]).to.eq(\"JMT\");\r",
+									"   pm.expect(pm.response.json()[\"tea\"]).to.eq(\"Jasmine Milk Tea\");\r",
+									"   pm.expect(pm.response.json()[\"topping\"]).to.eq(\"Boba\");\r",
+									"   pm.expect(pm.response.json()[\"order\"]).to.deep.equal(undefined);\r",
+									"   //Check if the self url is correct\r",
+									"   const self_url = pm.environment.get(\"app_url\") + \"/drinks/\" + pm.response.json()[\"id\"];\r",
+									"   pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{app_url}}/drinks/{{drink_id_3}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks",
+								"{{drink_id_3}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 - PUT Order_3",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"200 status code\", function () {\r",
+									"    //Check for 201 status code\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"content is valid\", function () {\r",
+									"   //Check if the response content is valid and matches the expected values\r",
+									"   pm.expect(pm.response.json()[\"date\"]).to.eq(\"05-05-03\");\r",
+									"   pm.expect(pm.response.json()[\"size\"]).to.deep.equal(\"Small\");\r",
+									"   //Check if the self url is correct\r",
+									"   const self_url = pm.environment.get(\"app_url\") + \"/orders/\" + pm.response.json()[\"order_id\"];\r",
+									"   pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{wallace_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/atom+xml",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"date\": \"05-05-03\",\r\n    \"drink_id\": {{drink_id_1}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/orders/{{order_id_1}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"orders",
+								"{{order_id_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400- PATCH Unsupported Media Type",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"400 status code\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"pm.test(\"content is not valid\", function () {\r",
+									"    //Check if content is valid\r",
+									"   pm.expect(pm.response.json()[\"Error\"]).to.eq(\"Unsupported Media Type. Please submit 'application/json' or 'text/html' MIME type.\")\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{wallace_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/atom+xml",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"date\": \"05-05-03\",\r\n    \"drink_id\": {{drink_id_1}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/orders/{{order_id_1}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"orders",
+								"{{order_id_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 - GET drink_id_3",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"200 status code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"content is valid\", function () {\r",
+									"   //Check if the response content is valid and matches the expected values\r",
+									"   pm.expect(pm.response.json()[\"name\"]).to.eq(\"JMT\");\r",
+									"   pm.expect(pm.response.json()[\"tea\"]).to.eq(\"Jasmine Milk Tea\");\r",
+									"   pm.expect(pm.response.json()[\"topping\"]).to.eq(\"Boba\");\r",
+									"   pm.expect(pm.response.json()[\"order\"]).to.deep.equal(undefined);\r",
+									"   //Check if the self url is correct\r",
+									"   const self_url = pm.environment.get(\"app_url\") + \"/drinks/\" + pm.response.json()[\"id\"];\r",
+									"   pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{app_url}}/drinks/{{drink_id_3}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks",
+								"{{drink_id_3}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "204 - DELETE Order_1",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt2}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{app_url}}/orders/{{order_id_1}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"orders",
+								"{{order_id_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 - DELETE Unauthorized",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt2}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{app_url}}/orders/{{order_id_1}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"orders",
+								"{{order_id_1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 - GET drink_id_3 Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"200 status code\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"content is valid\", function () {\r",
+									"   //Check if the response content is valid and matches the expected values\r",
+									"   pm.expect(pm.response.json()[\"name\"]).to.eq(\"JMT\");\r",
+									"   pm.expect(pm.response.json()[\"tea\"]).to.eq(\"Jasmine Milk Tea\");\r",
+									"   pm.expect(pm.response.json()[\"topping\"]).to.eq(\"Boba\");\r",
+									"   pm.expect(pm.response.json()[\"order\"]).to.deep.equal(undefined);\r",
+									"   //Check if the self url is correct\r",
+									"   const self_url = pm.environment.get(\"app_url\") + \"/drinks/\" + pm.response.json()[\"id\"];\r",
+									"   pm.expect(pm.response.json()[\"self\"]).to.eq(self_url);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{app_url}}/drinks/{{drink_id_3}}",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"drinks",
+								"{{drink_id_3}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{wallace_token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "200 - GET all Users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// pm.environment.set(\"wallace_token\", pm.response.json()[\"id_token\"]);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImZqUVpGdElpd3AyYVVabEdqZHNuTCJ9.eyJuaWNrbmFtZSI6IndhbGxhY2UiLCJuYW1lIjoid2FsbGFjZUBjaGVlc2UuY29tIiwicGljdHVyZSI6Imh0dHBzOi8vcy5ncmF2YXRhci5jb20vYXZhdGFyL2Q2NjBhMjE4ODNhNGNjYjM3OWFkMWNlMWIxOTg0M2U5P3M9NDgwJnI9cGcmZD1odHRwcyUzQSUyRiUyRmNkbi5hdXRoMC5jb20lMkZhdmF0YXJzJTJGd2EucG5nIiwidXBkYXRlZF9hdCI6IjIwMjItMTEtMjlUMDU6MDA6NTIuODAwWiIsImVtYWlsIjoid2FsbGFjZUBjaGVlc2UuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJpc3MiOiJodHRwczovL2JvYmEtc2hvcC51cy5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NjM4NThkZWY2N2FkM2UwOTAzMGNkM2ZhIiwiYXVkIjoieUx6Z1poOFR3OUw3UWM3dDhvdWo4SGptbmR1dmJVU3ciLCJpYXQiOjE2Njk2OTgwNTIsImV4cCI6MTY2OTczNDA1Mn0.iDxjtcs0mX1ocEgyAhNalFJvPIF9oqqQcfvdWtQHhSPHxRXNMcpHyueCJ6UiTEX6SAIs2Zfzsak7Yj8IVg7dAv0JSekP6ODxYa4SADskvc8EyM-UerUVfSdCzTOmdzGwiaxZB7630FANWdK6A0QZT2rF94td5V1HwNB5fHhspMzSv8RXVwTWZ1C4AJwGSgrVRfEPdXGuDBs3elQ3OU_O0WIrQiFYzHO85wLnVB-jsh9RGJx0nvxTMvAcJ2C3FblFw4CZ0im9yux4zbxMnmT7hUHeNes77Chis99nFWT_yAHrHTg3JuExH-ke-GQSOOf93xWdMX645jfc3opc3iIDQw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/users",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "415- GET all Users Incorrect Data Type",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// pm.environment.set(\"wallace_token\", pm.response.json()[\"id_token\"]);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/atom+xml",
+								"type": "text"
+							},
+							{
+								"key": "ac",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{app_url}}/users",
+							"host": [
+								"{{app_url}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "oauth wallace",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"jwt1\", pm.response.json()[\"id_token\"]);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"grant_type\": \"password\",\r\n    \"username\": \"wallace@cheese.com\",\r\n    \"password\": \"Cheese1234!\",\r\n    \"client_id\": \"yLzgZh8Tw9L7Qc7t8ouj8HjmnduvbUSw\",\r\n    \"client_secret\": \"Q2X7fbM3Tg9omDw81BEjbc3qthug3Itertn_mtrOHW0mipp-eO16Exq3_Jzioz56\"\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{auth_url}}/oauth/token",
+					"host": [
+						"{{auth_url}}"
+					],
+					"path": [
+						"oauth",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "oauth grommit",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"jwt2\", pm.response.json()[\"id_token\"]);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"grant_type\": \"password\",\r\n    \"username\": \"grommit@cheese.com\",\r\n    \"password\": \"Cheese1234!\",\r\n    \"client_id\": \"yLzgZh8Tw9L7Qc7t8ouj8HjmnduvbUSw\",\r\n    \"client_secret\": \"Q2X7fbM3Tg9omDw81BEjbc3qthug3Itertn_mtrOHW0mipp-eO16Exq3_Jzioz56\"\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{auth_url}}/oauth/token",
+					"host": [
+						"{{auth_url}}"
+					],
+					"path": [
+						"oauth",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Wallace oauth Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"wallace_token\", pm.response.json()[\"id_token\"]);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"wallace@cheese.com\",\r\n    \"password\":\"Cheese1234!\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{app_url}}/login",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Grommitoauth Login Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"grommit_token\", pm.response.json()[\"id_token\"]);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{grommit_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"grommit@cheese.com\",\r\n    \"password\":\"Cheese1234!\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{app_url}}/login",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
